@@ -52,10 +52,15 @@ int *drop(int **rolls, int numrolls, int drop) {
     return *rolls;
 }
 
+
+
 /* For use with quicksort */
 int cmp(const void *a, const void *b) {
     return *((int*) a) - *((int*) b);
 }
+
+
+
 
 /* Sums an array of integers */
 int sum(int *sumands, int nmembs) {
@@ -67,7 +72,7 @@ int sum(int *sumands, int nmembs) {
     /* If verbose, print the sum.
        If noverbose, then reporting will be handled elsewhere. */
     if (verbose) {
-        printf("Totalling %d\n", ret);
+        printf("Total: %d\n", ret);
     }
 
     return ret;

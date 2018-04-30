@@ -71,7 +71,7 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 16 "roll.y" /* yacc.c:1909  */
+#line 17 "roll.y" /* yacc.c:1909  */
  int i; 
 
 #line 78 "roll.tab.h" /* yacc.c:1909  */

@@ -491,9 +491,10 @@ char *yytext;
 #line 1 "roll.lex"
 #line 2 "roll.lex"
     #include <stdlib.h>
+    #include <stdio.h>
     #include "roll.tab.h"
 
-#line 497 "lex.yy.c"
+#line 498 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -711,9 +712,9 @@ YY_DECL
 		}
 
 	{
-#line 9 "roll.lex"
+#line 10 "roll.lex"
 
-#line 717 "lex.yy.c"
+#line 718 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -772,106 +773,106 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 10 "roll.lex"
+#line 11 "roll.lex"
 { return VERBOSE; }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 11 "roll.lex"
+#line 12 "roll.lex"
 { return NOVERBOSE; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 12 "roll.lex"
+#line 13 "roll.lex"
 { return DEE; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 13 "roll.lex"
+#line 14 "roll.lex"
 { return DROPHIGH; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 14 "roll.lex"
+#line 15 "roll.lex"
 { return DROPLOW; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 15 "roll.lex"
+#line 16 "roll.lex"
 { return EX; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 16 "roll.lex"
+#line 17 "roll.lex"
 { yylval.i = atoi(yytext); return NUMBER; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 17 "roll.lex"
+#line 18 "roll.lex"
 { return PERCENT; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 18 "roll.lex"
+#line 19 "roll.lex"
 { return PLUS; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 19 "roll.lex"
+#line 20 "roll.lex"
 { return MINUS; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 20 "roll.lex"
+#line 21 "roll.lex"
 { return MULT; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 21 "roll.lex"
+#line 22 "roll.lex"
 { return DIV; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 22 "roll.lex"
+#line 23 "roll.lex"
 { return GREQUAL; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 23 "roll.lex"
+#line 24 "roll.lex"
 { return LEQUAL; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 24 "roll.lex"
+#line 25 "roll.lex"
 { return EQUAL; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 25 "roll.lex"
+#line 26 "roll.lex"
 { return LESSTHAN; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 26 "roll.lex"
+#line 27 "roll.lex"
 { return GREATERTHAN; }
 	YY_BREAK
 case 18:
 /* rule 18 can match eol */
 YY_RULE_SETUP
-#line 27 "roll.lex"
+#line 28 "roll.lex"
 { return ENDLINE; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 28 "roll.lex"
+#line 29 "roll.lex"
 ;
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 29 "roll.lex"
+#line 30 "roll.lex"
 ECHO;
 	YY_BREAK
-#line 875 "lex.yy.c"
+#line 876 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1872,7 +1873,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 29 "roll.lex"
+#line 30 "roll.lex"
 
 
 

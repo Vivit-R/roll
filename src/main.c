@@ -3,9 +3,10 @@
 #include <stdlib.h>
 #include <time.h>
 #include "roll.h"
+#include "roll.tab.h"
 #include "eval.h"
 
-/*
+
 int main(int argc, char **argv) {
     srand(time(NULL));
     int *roll1 = malloc(3 * sizeof (int));
@@ -22,5 +23,7 @@ int main(int argc, char **argv) {
     free(roll1);
     free(roll2);
 
+    yyparse();
+
     return 0;
-} */
+}

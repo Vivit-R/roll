@@ -1,5 +1,6 @@
 %{
     #include <stdio.h>
+    #include <string.h>
     #include "roll.tab.h"
     #include "eval.h"
     #include "roll.h"
@@ -39,9 +40,7 @@
 %type<i> NUMBER
 
 %%
-rolls: roll ENDLINE | roll ENDLINE rolls | option ENDLINE rolls {
-    verbose = 1;
-}
+rolls: roll endline | roll endline rolls | option endline rolls
 ;
 
 option: verbose | noverbose
@@ -55,20 +54,31 @@ noverbose: NOVERBOSE {
              verbose = 0;
          }
 
+endline: ENDLINE
+        {
+            printf("> ");
+        }
+        ;
+
 roll:   DEE NUMBER {
-            printf("%d\n", d(1, $2));
+            d(1, $2);
     } | NUMBER DEE {
-            printf("%d\n", d($1, 6));
+            d($1, 6);
     } | DEE PERCENT {
-            printf("%d\n", d(1, 100));
+            d(1, 100);
     } | NUMBER DEE NUMBER {
-            printf("%d\n", d($1, $3));
-    }
+            d($1, $3);
+    } | explode {}
     ;
 
-explode:    NUMBER EX NUMBER | EX NUMBER
-    {
-        printf("YOUR HEAD ASPLODE\n");
+explode:    EX NUMBER {
+                x(1, $2);
+    } | NUMBER EX {
+                x($1, 6);
+    } | EX PERCENT {    /* Dunno why you'd want this, but just in case */
+                x(1, 100);
+    } | NUMBER EX NUMBER {
+                x($1, $3);
     }
     ;
 
@@ -91,12 +101,12 @@ evaluable:  operations NUMBER | evaluable
     ;
 
 %%
-
+/*
 int main() {
     yyparse();
     return 0;
 }
-
+*/
 void yyerror(const char* msg) {
     fprintf(stderr, "I AM ERROR: %s\n", msg);
 }
