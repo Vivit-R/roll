@@ -1,9 +1,28 @@
 CC=gcc
+CFLAGS=-g -Wall
 IFLAGS=-I ./include
 SRC=src
-LFLAGS=-lncurses
-OFILE=bin/t
+LFLAGS=
+BIN=bin
+SORTO=mv *.o -t ./bin
+SORTC=mv *.c -t ./src
+SORTH=mv *.h -t ./include
 
+COMPILE=$(CC) $(CFLAGS) $(IFLAGS) -c $(SRC)/*.c 
 
-all:
-	$(CC) -g -Wall $(SRC)/*.c $(IFLAGS) -o $(OFILE) $(LFLAGS)
+PARSEDIR=parser
+
+all: parser game
+	$(CC) $(CFLAGS) $(BIN)/*.o -o $(BIN)/main
+
+generated-code:
+	cd $(PARSEDIR); flex *.lex; bison -d *.y
+	cd $(PARSEDIR); $(SORTC); $(SORTH)
+
+parser: generated-code
+	cd $(PARSEDIR); $(COMPILE); $(SORTO)
+
+game:
+	$(COMPILE)
+	$(SORTO)
+
