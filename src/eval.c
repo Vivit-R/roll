@@ -3,77 +3,87 @@
 #include "eval.h"
 #include "settings.h"
 
-/* Drops the highest or lowest values of the array pointed to by rolls. */
-/* Negative value for  drop  means drop high, positive value means drop low. */
-int *drop(int **rolls, int numrolls, int drop) {
-    if (drop == 0) {
-        /* Nothing to do here */
-        return *rolls;
+
+/* Returns the bottom of the die pool in which the given die is contained. */
+struct die *bottom(struct die *d) {
+    while (d && d->prev) {
+        d = d->prev;
     }
-
-    /* We will sort this to find the highest and the lowest numbers */
-    int *sorted = malloc(sizeof (int) * numrolls);
-    int *ret = malloc(sizeof (int) * (numrolls - abs(drop)));
-
-    for (int i = 0; i < numrolls; i++) {
-        sorted[i] = (*rolls)[i];
-    }
-
-    /* qsort sorts the rolls in ascending order */
-    qsort(sorted, numrolls, sizeof (int), cmp);
-
-    if (drop > 0) {
-        /* If drop is greater than zero, we will be dropping low -- or to look
-           at it differently, keeping high.  We start at an index equal to
-           drop, and then then iterate upward until we reach the end of the
-           array, leaving out elements [0..drop] of the array. */
-        for (int i = drop; i < numrolls; i++) {
-            ret[i - drop] = sorted[i];
-        }
-    } else if (drop < 0) {
-        /* If drop is less than zero, we will be dropping high -- or to look
-           at it differently, keeping low.  This time we start at zero and
-           iterate upward, with the ceiling of the array lowered by drop. */
-        for (int i = 0; i < numrolls - drop; i++) {
-            ret[i] = sorted[i];
-        }
-    } else {
-        /* Can't happen: if drop is equal to zero,
-           then we've already returned */
-    }
-
-    free(sorted);
-    free(*rolls);
-
-    /* Actually modify the rolls at the location they were called
-     * FIXME: Do we really want to do this? */ 
-    *rolls = ret;
-
-    return *rolls;
+    return d;
 }
 
+/* Removes and frees a die from the pool. */
+void drop(struct die *d) {
+    if (d->next) {
+        d->next->prev = d->prev;
+    }
 
+    if (d->prev) {
+        d->prev->next = d->next;
+    }
 
-/* For use with quicksort */
-int cmp(const void *a, const void *b) {
-    return *((int*) a) - *((int*) b);
+    free(d);
 }
 
+/* Drops the highest or lowest values in the given die pool.
+ * Negative value for dropn means drop high, positive means drop low. */
+// FIXME: O(n^2) time
+struct die *dropdice(struct die *d, int dropn) {
+    /*  lowest and prepare the
+       memory location for the die we intend to drop */
+    struct die *dropit = bottom(d);
 
+    while (dropn > 0) {
+        d = bottom(d);
+        dropit = d;
+        while (d->next) {
+            /* If the value of the die at d is less than the value of the die
+               at dropit, set dropit equal to d. */
+            if (d->val < dropit->val) {
+                dropit = d;
+            }
+            d = d->next;
+        }
 
-
-/* Sums an array of integers */
-int sum(int *sumands, int nmembs) {
-    int ret = 0;
-    for (int i = 0; i < nmembs; i++) {
-        ret += sumands[i];
+        drop(dropit);
+        dropn--;
     }
 
-    /* If verbose, print the sum.
-       If noverbose, then reporting will be handled elsewhere. */
-    if (verbose) {
-        printf("Total: %d\n", ret);
+    /* Do the same, but dropping high instead of low. */
+    while (dropn < 0) {
+        d = bottom(d);
+        dropit = d;
+        while (d->next) {
+            /* If the value of the die at d is less than the value of the die
+               at dropit, set dropit equal to d. */
+            if (d->val > dropit->val) {
+                dropit = d;
+            }
+            d = d->next;
+        }
+
+        drop(dropit);
+        dropn++;
     }
 
-    return ret;
+    return bottom(d);
+}
+
+/* Sums the value of the dice in the pool of which the die at the given pointer
+ * is a member */
+int sumdice(struct die *d) {
+    /* Iterate to the bottom of the linked list */
+    while (d->prev) {
+        d = d->prev;
+    }
+
+    int sum = 0;
+
+    /* Iterate upwards through the linked list until the end is reached */
+    while (d) {
+        sum += d->val;
+        d = d->next;
+    }
+
+    return sum;
 }

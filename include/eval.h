@@ -1,8 +1,13 @@
 #ifndef __ROLL_EVAL__
 #define __ROLL_EVAL__
 
-int *drop(int **rolls, int numrolls, int drop);
+#include "roll.h"
+
 int cmp(const void *a, const void *b);
-int sum(int *sumands, int nmembs);
+void drop(struct die *d);
+struct die *dropdice(struct die *d, int drop);
+// int sum(int *sumands, int nmembs);
+int sumdice(struct die *d);
+struct die *bottom(struct die *d); 
 
 #endif
