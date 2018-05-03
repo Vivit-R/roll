@@ -47,11 +47,11 @@ option: verbose | noverbose
 ;
 
 verbose: VERBOSE {
-             verbose = 1;
+             setverbose();
          }
 
 noverbose: NOVERBOSE {
-             verbose = 0;
+             setnoverbose();
          }
 
 endline: ENDLINE
@@ -75,8 +75,6 @@ explode:    EX NUMBER {
                 x(1, $2);
     } | NUMBER EX {
                 x($1, 6);
-    } | EX PERCENT {    /* Dunno why you'd want this, but just in case */
-                x(1, 100);
     } | NUMBER EX NUMBER {
                 x($1, $3);
     }
@@ -101,12 +99,7 @@ evaluable:  operations NUMBER | evaluable
     ;
 
 %%
-/*
-int main() {
-    yyparse();
-    return 0;
-}
-*/
+
 void yyerror(const char* msg) {
     fprintf(stderr, "I AM ERROR: %s\n", msg);
 }

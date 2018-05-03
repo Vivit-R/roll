@@ -25,4 +25,3 @@ parser: generated-code
 game:
 	$(COMPILE)
 	$(SORTO)
-

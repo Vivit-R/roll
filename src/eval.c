@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "eval.h"
 #include "settings.h"
 
@@ -11,6 +12,15 @@ struct die *bottom(struct die *d) {
     }
     return d;
 }
+
+/* Returns the top of the die pool in which the given die is contained. */
+struct die *top(struct die *d) {
+    while (d && d->next) {
+        d = d->next;
+    }
+    return d;
+}
+
 
 /* Removes and frees a die from the pool. */
 void drop(struct die *d) {
@@ -24,6 +34,7 @@ void drop(struct die *d) {
 
     free(d);
 }
+
 
 /* Drops the highest or lowest values in the given die pool.
  * Negative value for dropn means drop high, positive means drop low. */
@@ -69,6 +80,86 @@ struct die *dropdice(struct die *d, int dropn) {
     return bottom(d);
 }
 
+
+/* Checks for maximum value in a pool, rolls that many dice and adds the new
+   ones to the pool. */
+struct die *explode(struct die *d, int sides, int limiter) {
+    int explosions = 0;
+
+    explosions = countsuccesses(d, sides, "=");
+
+    if (explosions + limiter > EXPLODE_LIMIT) {
+        explosions = EXPLODE_LIMIT - limiter;
+    }
+
+    if (explosions) {
+        struct die *newdice = rolldice(explosions, sides);
+        explode(newdice, sides, limiter + explosions);
+        joinpools(d, newdice);
+    }
+
+    return d;
+}
+
+
+/* Combines two pools of dice together */
+struct die *joinpools(struct die *d1, struct die *d2) {
+    struct die *d1top = top(d1);
+    struct die *d2bot = bottom(d2);
+
+    /* Sanity check */
+    if (!d2) {
+        return d1;
+    } else if (!d1) {
+        return d2;
+    }
+
+    d1top->next = d2bot;
+    d2bot->prev = d1top;
+
+    return d1top;
+}
+
+
+/* Counts dice that fulfill a certain test given by a number and a string.
+ * If the string is not recognized, default to "=". */
+int countsuccesses(struct die *d, int tn, const char *test) {
+    d = bottom(d);
+    int op = 0;
+
+    if (!strcmp(test, ">")) {
+        op = 1;
+    } else if (!strcmp(test, "<")) {
+        op = 2;
+    } else if (!strcmp(test, ">=")) {
+        op = 3;
+    } else if (!strcmp(test, "<=")) {
+        op = 4;
+    }
+
+    int count = 0;
+    while (d) {
+        switch (op) {
+            case 1: if (d->val > tn) count++;
+                break;
+            case 2: if (d->val < tn) count++;
+                break;
+            case 3: if (d->val >= tn) count++;
+                break;
+            case 4: if (d->val <= tn) count++;
+                break;
+
+            default: if (d->val == tn) count++;
+                break;
+        }
+
+        d = d->next;
+    }
+
+    return count;
+}
+
+
 /* Sums the value of the dice in the pool of which the die at the given pointer
  * is a member */
 int sumdice(struct die *d) {
@@ -86,4 +177,19 @@ int sumdice(struct die *d) {
     }
 
     return sum;
+}
+
+
+/* Prints the values of all the dice in the pool to stdout */
+void printdice(struct die *d) {
+    d = bottom(d);
+    printf("%d", d->val);
+    d = d->next;
+
+    while (d) {
+        printf(", %d", d->val);
+        d = d->next;
+    }
+
+    printf("\n");
 }

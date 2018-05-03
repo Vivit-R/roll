@@ -7,23 +7,6 @@
 
 int verbose;
 
-/* Standard additive roll */
-int d(int dice, int sides) {
-    struct die *rolls = rolldice(dice, sides);
-    struct die *trace = rolls;
-
-    int ret = 0;
-
-    while (trace) {
-        ret += trace->val;
-        trace = trace->next;
-    }
-
-    freedice(rolls);
-    return ret;
-}
-
-
 /* Recursively builds a double linked list of rolled dice. 
  * ALLOCATES ITS RETURN VALUES.
  * FIXME O(n) space */
@@ -56,4 +39,46 @@ void freedice(struct die *d) {
         drop(d);
         d = freenext;
     }
+}
+
+
+struct die *explodedice(int dice, int sides) {
+    struct die *d = rolldice(dice, sides);
+    explode(d, sides, dice);
+
+    return d;
+}
+
+
+/* Standard additive roll */
+int d(int dice, int sides) {
+    struct die *rolls = rolldice(dice, sides);
+    int ret = sumdice(rolls);
+    if (verbose) {
+        printdice(rolls);
+    }
+
+    freedice(rolls);
+    return ret;
+}
+
+/* Exploding additive roll */
+int x(int dice, int sides) {
+    struct die *rolls = explodedice(dice, sides);
+    int ret = sumdice(rolls);
+    if (verbose) {
+        printdice(rolls);
+    }
+    freedice(rolls);
+    return ret;
+}
+
+void setverbose() {
+    printf("Verbose mode activated.\n");
+    verbose = 1;
+}
+
+void setnoverbose() {
+    printf("Verbose mode deactivated.\n");
+    verbose = 0;
 }

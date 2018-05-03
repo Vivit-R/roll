@@ -11,13 +11,14 @@ struct die {
 };
 
 struct die *rolldice(int dice, int sides);
-struct die *explode(int dice, int sides);
 int d(int dice, int sides);
+
+struct die *explodedice(int dice, int sides);
 int x(int dice, int sides);
 
 void freedice(struct die *dietofree);
 
-/* The maximum number of dice that can be exploded */
-#define EXPLODE_LIMIT 32
+void setverbose();
+void setnoverbose();
 
 #endif
