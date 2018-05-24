@@ -5,7 +5,8 @@
     #include "eval.h"
     #include "roll.h"
     #include "settings.h"
-    
+    #include "output.h"
+
     void yyerror(const char *msg);
     int yylex();
 %}
@@ -19,74 +20,110 @@
 %token DEE
 %token DROPHIGH
 %token DROPLOW
-%token EX
 %token PERCENT
-%token PLUS
-%token MINUS
-%token MULT
-%token DIV
+%token EXIT
 
+%token SET
 %token VERBOSE
 %token NOVERBOSE
 
-%token GREQUAL
-%token LEQUAL
-%token EQUAL
-%token GREATERTHAN
-%token LESSTHAN
+%token GE
+%token LE
+%token EQ
+%token GR
+%token LT
+%token GGR
+%token LLT
+%token GGE
+%token LLE
+
 %token ENDLINE
 
+%token LPAREN
+%token RPAREN
+
+%token WHAT
+
 %token NUMBER
-%type<i> NUMBER
+%type<i> NUMBER exp roll
+
+%left PLUS
+%left MINUS
+%left TIMES
+%left DIVIDE
 
 %%
-rolls: roll endline | roll endline rolls | option endline rolls
+rolls: line rolls | exit
 ;
 
-option: verbose | noverbose
-;
+line:
+    exp ENDLINE {
+        queuemsg("Result: ");
+        queuenum($1);
+        printmsg();
+        printf("\n> ");
+    } | report_option ENDLINE {
+        reportverbose();
+        printf("> ");
+    } | set ENDLINE {
+        printf("> ");
+    } | bad_input ENDLINE {
+        printf("> ");
+    }
+    ;
 
-verbose: VERBOSE {
-             setverbose();
-         }
+bad_input:
+    error bad_input | error | WHAT bad_input | WHAT {
+        printf("Sorry, I don't understand that.\n");
+    }
+    ;
 
-noverbose: NOVERBOSE {
-             setnoverbose();
-         }
 
-endline: ENDLINE
-        {
-            printf("> ");
-        }
-        ;
+set: SET VERBOSE {
+         setverbose();
+    } | SET NOVERBOSE {
+         setnoverbose();
+    }
+    ;
+
+report_option: VERBOSE | NOVERBOSE {
+    }
+    ;
+
+exit: EXIT ENDLINE
+    {
+        return 0;
+    }
+    ;
 
 roll:   DEE NUMBER {
-            d(1, $2);
+            $$ = d(1, $2);
     } | NUMBER DEE {
-            d($1, 6);
+            $$ = d($1, 6);
     } | DEE PERCENT {
-            d(1, 100);
+            $$ = d(1, 100);
     } | NUMBER DEE NUMBER {
-            d($1, $3);
-    } | explode {}
-    ;
-
-explode:    EX NUMBER {
-                x(1, $2);
-    } | NUMBER EX {
-                x($1, 6);
-    } | NUMBER EX NUMBER {
-                x($1, $3);
+            $$ = d($1, $3);
     }
     ;
 
-arithmetic:  PLUS | MINUS | MULT | DIV
-    {
-        printf("NOBODY SAID THERE'D BE MATH!!\n");
+exp:
+    roll | NUMBER {
+        $$ = $1;
+    } | LPAREN exp RPAREN {
+        $$ = $2;
+    } | exp PLUS exp {
+        $$ = $1 + $3;
+    } | exp TIMES exp {
+        $$ = $1 * $3;
+    } | exp MINUS exp {
+        $$ = $1 - $3;
+    } | exp DIVIDE exp {
+        $$ = $1 / $3;
     }
     ;
 
-operations:  DROPHIGH | DROPLOW | arithmetic
+operations:  DROPHIGH | DROPLOW | exp
     {
         printf("I SAID, NOBODY SAID THERE WOULD BE MATH!\n");
     }

@@ -82,19 +82,19 @@ struct die *dropdice(struct die *d, int dropn) {
 
 
 /* Checks for maximum value in a pool, rolls that many dice and adds the new
-   ones to the pool. */
-struct die *explode(struct die *d, int sides, int limiter) {
+   ones to the pool. TODO: Implement complex conditional explosion. */
+struct die *explode(struct die *d, int limiter) {
     int explosions = 0;
 
-    explosions = countsuccesses(d, sides, "=");
+    explosions = countsuccesses(d, d->sides, "=");
 
     if (explosions + limiter > EXPLODE_LIMIT) {
         explosions = EXPLODE_LIMIT - limiter;
     }
 
     if (explosions) {
-        struct die *newdice = rolldice(explosions, sides);
-        explode(newdice, sides, limiter + explosions);
+        struct die *newdice = rolldice(explosions, d->sides);
+        explode(newdice, limiter + explosions);
         joinpools(d, newdice);
     }
 
@@ -179,17 +179,3 @@ int sumdice(struct die *d) {
     return sum;
 }
 
-
-/* Prints the values of all the dice in the pool to stdout */
-void printdice(struct die *d) {
-    d = bottom(d);
-    printf("%d", d->val);
-    d = d->next;
-
-    while (d) {
-        printf(", %d", d->val);
-        d = d->next;
-    }
-
-    printf("\n");
-}

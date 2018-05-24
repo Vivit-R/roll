@@ -48,21 +48,29 @@ extern int yydebug;
     DEE = 258,
     DROPHIGH = 259,
     DROPLOW = 260,
-    EX = 261,
-    PERCENT = 262,
-    PLUS = 263,
-    MINUS = 264,
-    MULT = 265,
-    DIV = 266,
-    VERBOSE = 267,
-    NOVERBOSE = 268,
-    GREQUAL = 269,
-    LEQUAL = 270,
-    EQUAL = 271,
-    GREATERTHAN = 272,
-    LESSTHAN = 273,
-    ENDLINE = 274,
-    NUMBER = 275
+    PERCENT = 261,
+    EXIT = 262,
+    SET = 263,
+    VERBOSE = 264,
+    NOVERBOSE = 265,
+    GE = 266,
+    LE = 267,
+    EQ = 268,
+    GR = 269,
+    LT = 270,
+    GGR = 271,
+    LLT = 272,
+    GGE = 273,
+    LLE = 274,
+    ENDLINE = 275,
+    LPAREN = 276,
+    RPAREN = 277,
+    WHAT = 278,
+    NUMBER = 279,
+    PLUS = 280,
+    MINUS = 281,
+    TIMES = 282,
+    DIVIDE = 283
   };
 #endif
 
@@ -71,10 +79,10 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 17 "roll.y" /* yacc.c:1909  */
+#line 18 "roll.y" /* yacc.c:1909  */
  int i; 
 
-#line 78 "roll.tab.h" /* yacc.c:1909  */
+#line 86 "roll.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

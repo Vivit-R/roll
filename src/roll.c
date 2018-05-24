@@ -3,9 +3,9 @@
 #include <stdio.h>
 #include "roll.h"
 #include "settings.h"
+#include "output.h"
 #include "eval.h"
 
-int verbose;
 
 /* Recursively builds a double linked list of rolled dice. 
  * ALLOCATES ITS RETURN VALUES.
@@ -17,6 +17,8 @@ struct die *rolldice(int dice, int sides) {
 
     struct die *ret = malloc(sizeof (struct die));
 
+    ret->num = dice;
+    ret->sides = sides;
     ret->val = rand() % sides + 1;
     ret->prev = NULL;
     ret->next = rolldice(dice - 1, sides);
@@ -24,12 +26,23 @@ struct die *rolldice(int dice, int sides) {
     if (ret->next) {
         ret->next->prev = ret;
     }
+    
 
     return ret;
 }
 
+/* Rerolls the die at d and returns a pointer to it. */
+struct die *reroll(struct die *d) {
+    if (!d)
+        return NULL; /* Just in case */
 
-/* Frees the dice in a given pool of rolls */
+    d->val = rand() % d->sides + 1;
+
+    return d;
+}
+
+
+/* Frees all dice in a given pool of rolls */
 void freedice(struct die *d) {
     d = bottom(d);
     struct die *freenext;
@@ -44,7 +57,7 @@ void freedice(struct die *d) {
 
 struct die *explodedice(int dice, int sides) {
     struct die *d = rolldice(dice, sides);
-    explode(d, sides, dice);
+    explode(d, dice);
 
     return d;
 }
@@ -54,15 +67,19 @@ struct die *explodedice(int dice, int sides) {
 int d(int dice, int sides) {
     struct die *rolls = rolldice(dice, sides);
     int ret = sumdice(rolls);
+    printdice(rolls);
+
     if (verbose) {
-        printdice(rolls);
+        queuemsg("Total: ");
+        queuenum(ret);
+        queuemsg("\n");
     }
 
     freedice(rolls);
     return ret;
 }
 
-/* Exploding additive roll */
+/* Exploding explosive roll */
 int x(int dice, int sides) {
     struct die *rolls = explodedice(dice, sides);
     int ret = sumdice(rolls);
@@ -71,14 +88,4 @@ int x(int dice, int sides) {
     }
     freedice(rolls);
     return ret;
-}
-
-void setverbose() {
-    printf("Verbose mode activated.\n");
-    verbose = 1;
-}
-
-void setnoverbose() {
-    printf("Verbose mode deactivated.\n");
-    verbose = 0;
 }

@@ -9,7 +9,7 @@ struct die *dropdice(struct die *d, int drop);
 int sumdice(struct die *d);
 int countsuccesses(struct die *d, int tn, const char *test);
 struct die *bottom(struct die *d); 
-struct die *explode(struct die *d, int sides, int limiter);
+struct die *explode(struct die *d, int limiter);
 struct die *joinpools(struct die *d1, struct die *d2); 
 void printdice(struct die *d);
 

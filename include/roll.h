@@ -6,11 +6,14 @@
 struct die;
 struct die {
     int val;
+    int num;
+    int sides;
     struct die *next;
     struct die *prev;
 };
 
 struct die *rolldice(int dice, int sides);
+struct die *reroll(struct die *d);
 int d(int dice, int sides);
 
 struct die *explodedice(int dice, int sides);

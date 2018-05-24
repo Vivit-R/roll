@@ -3,4 +3,8 @@
 
 extern int verbose;
 
+void setverbose();
+void setnoverbose();
+void reportverbose();
+
 #endif
