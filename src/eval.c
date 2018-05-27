@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "eval.h"
+#include "output.h"
 #include "settings.h"
 
 
@@ -176,6 +177,19 @@ int sumdice(struct die *d) {
         d = d->next;
     }
 
+    if (verbose) {
+        queuemsg("Total: ");
+        queuenum(sum);
+        queuemsg("\n");
+    }
+
     return sum;
+}
+
+/* Sum the dice and free the pointer */
+int destructive_sumdice(struct die *d) {
+    int ret = sumdice(d);
+    freedice(d);
+    return ret;
 }
 

@@ -9,58 +9,94 @@
 
     void yyerror(const char *msg);
     int yylex();
+
+    void finish();
 %}
 
 %error-verbose
 
-%start rolls
+%start session
 
-%union { int i; }
+%union { int i; struct die *p; int b; char *s; }
 
-%token DEE
-%token DROPHIGH
-%token DROPLOW
-%token PERCENT
+
+
+/* Meta-commands */
 %token EXIT
-
+%token PRINT
 %token SET
+
+/* Linsolv-requested playing cards */
+%token DRAW
+
+/* Options */
 %token VERBOSE
 %token NOVERBOSE
 
-%token GE
-%token LE
-%token EQ
-%token GR
-%token LT
-%token GGR
-%token LLT
-%token GGE
-%token LLE
-
+/* An endline ends a statement */
 %token ENDLINE
 
+/* Parentheses, for association */
 %token LPAREN
 %token RPAREN
 
+/* Token for unrecognized text */
 %token WHAT
 
+/* Primitive data */
+%token STRING
 %token NUMBER
-%type<i> NUMBER exp roll
+%token PERCENT
+%token TRUE
+%token FALSE
 
-%left PLUS
-%left MINUS
-%left TIMES
-%left DIVIDE
+/* Type declarations */
+%type<i> NUMBER exp success_count eval conditional
+%type<b> check
+%type<p> roll
+
+/* Conditional operators -- the query may be used binarily or ternarily; the
+   colon is only used ternarily */
+%right QUERY
+%right COLON
+
+/* Simple comparison operators -- these yield Booleans */
+%right GE
+%right LE
+%right EQ
+%right GT
+%right LT
+
+/* Success-counting operators -- these yield integers */
+%right EEQ
+%right GGT
+%right LLT
+%right GGE
+%right LLE
+/* (Of course, it's C, so there isn't really a difference between an integer
+   and a Boolean as far as the computer is concerned) */
+
+/* Arithmetic operators */
+%left PLUS MINUS
+%left TIMES DIVIDE
+
+/* The D */
+%left DEE
 
 %%
-rolls: line rolls | exit
+session:
+    line session | exit {
+        finish();
+    }
 ;
 
 line:
-    exp ENDLINE {
-        queuemsg("Result: ");
-        queuenum($1);
-        printmsg();
+    DRAW ENDLINE {
+        char *card = drawcard();
+        printf("%s", card);
+        free(card);
+        printf("\n> ");
+    } | eval {
         printf("\n> ");
     } | report_option ENDLINE {
         reportverbose();
@@ -68,6 +104,8 @@ line:
     } | set ENDLINE {
         printf("> ");
     } | bad_input ENDLINE {
+        printf("> ");
+    } | ENDLINE {
         printf("> ");
     }
     ;
@@ -90,25 +128,32 @@ report_option: VERBOSE | NOVERBOSE {
     }
     ;
 
-exit: EXIT ENDLINE
-    {
-        return 0;
+exit:
+    EXIT ENDLINE | {
+        /* EOF behavior */
+        printf("\n");
     }
     ;
 
-roll:   DEE NUMBER {
+roll:   DEE exp {
             $$ = d(1, $2);
-    } | NUMBER DEE {
+    } | exp DEE {
             $$ = d($1, 6);
     } | DEE PERCENT {
             $$ = d(1, 100);
-    } | NUMBER DEE NUMBER {
+    } | exp DEE exp {
             $$ = d($1, $3);
     }
     ;
 
 exp:
-    roll | NUMBER {
+    NUMBER {
+        $$ = $1;
+    } | roll {
+        $$ = destructive_sumdice($1);
+    } | conditional {
+        $$ = $1;
+    } | success_count {
         $$ = $1;
     } | LPAREN exp RPAREN {
         $$ = $2;
@@ -123,20 +168,76 @@ exp:
     }
     ;
 
-operations:  DROPHIGH | DROPLOW | exp
-    {
-        printf("I SAID, NOBODY SAID THERE WOULD BE MATH!\n");
+eval:
+    NUMBER ENDLINE {
+        $$ = $1;
+        reportresult("Value: ", $$);
+    } | check ENDLINE {
+        $$ = $1;
+        reportsuccess($$);
+    } | exp ENDLINE {
+        $$ = $1;
+        reportresult("Result: ", $$);
+    } | success_count ENDLINE {
+        $$ = $1;
+        reportresult("Success(es): ", $$);
     }
     ;
 
-evaluable:  operations NUMBER | evaluable 
-    {
-        printf("MAAAAATH");
+success_count:
+    roll GGT exp {
+        /* Ugly kludge with the frees here, FIXME pls */
+        $$ = countsuccesses($1, $3, ">");
+        freedice($1);
+    } | roll LLT exp {
+        $$ = countsuccesses($1, $3, "<");
+        freedice($1);
+    } | roll GGE exp {
+        $$ = countsuccesses($1, $3, ">=");
+        freedice($1);
+    } | roll LLE exp {
+        $$ = countsuccesses($1, $3, "<=");
+        freedice($1);
+    } | roll EEQ exp {
+        $$ = countsuccesses($1, $3, "=");
+        freedice($1);
     }
     ;
+
+conditional:
+    check QUERY exp {
+        $$ = 0;
+        if ($1) {
+            $$ = $3; 
+        }
+    } | check QUERY exp COLON exp {
+        $$ = $5;
+        if ($1) {
+            $$ = $3; 
+        }
+    }
+
+check:
+    TRUE {
+        $$ = 1;
+    } | FALSE {
+        $$ = 0;
+    } | exp EQ exp { 
+        $$ = ($1 == $3);
+    } | exp GT exp {
+        $$ = ($1 > $3);
+    } | exp LT exp {
+        $$ = ($1 < $3);
+    } | exp GE exp {
+        $$ = ($1 >= $3);
+    } | exp LE exp {
+        $$ = ($1 <= $3);
+    }
+
 
 %%
 
 void yyerror(const char* msg) {
     fprintf(stderr, "I AM ERROR: %s\n", msg);
+    flushmsg();
 }

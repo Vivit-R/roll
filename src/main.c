@@ -10,15 +10,16 @@
 
 void init();
 void cleanup();
+void finish();
 
 extern int lenprintstr;
 
 int main(int argc, char **argv) {
+    init();
     printf("Welcome to roll interactive mode.\n> ");
     yyparse();
 
-    cleanup();
-    return 0;
+    finish();
 }
 
 
@@ -32,4 +33,10 @@ void cleanup() {
     if (lenprintstr) {
         free(printstr);
     }
+}
+
+void finish() {
+    printf("Goodbye. May your dice roll well.\n");
+    cleanup();
+    exit(0);
 }

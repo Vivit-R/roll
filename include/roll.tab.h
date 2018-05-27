@@ -45,32 +45,38 @@ extern int yydebug;
 # define YYTOKENTYPE
   enum yytokentype
   {
-    DEE = 258,
-    DROPHIGH = 259,
-    DROPLOW = 260,
-    PERCENT = 261,
-    EXIT = 262,
-    SET = 263,
-    VERBOSE = 264,
-    NOVERBOSE = 265,
-    GE = 266,
-    LE = 267,
-    EQ = 268,
-    GR = 269,
-    LT = 270,
-    GGR = 271,
-    LLT = 272,
-    GGE = 273,
-    LLE = 274,
-    ENDLINE = 275,
-    LPAREN = 276,
-    RPAREN = 277,
-    WHAT = 278,
-    NUMBER = 279,
-    PLUS = 280,
-    MINUS = 281,
-    TIMES = 282,
-    DIVIDE = 283
+    EXIT = 258,
+    PRINT = 259,
+    SET = 260,
+    DRAW = 261,
+    VERBOSE = 262,
+    NOVERBOSE = 263,
+    ENDLINE = 264,
+    LPAREN = 265,
+    RPAREN = 266,
+    WHAT = 267,
+    STRING = 268,
+    NUMBER = 269,
+    PERCENT = 270,
+    TRUE = 271,
+    FALSE = 272,
+    QUERY = 273,
+    COLON = 274,
+    GE = 275,
+    LE = 276,
+    EQ = 277,
+    GT = 278,
+    LT = 279,
+    EEQ = 280,
+    GGT = 281,
+    LLT = 282,
+    GGE = 283,
+    LLE = 284,
+    PLUS = 285,
+    MINUS = 286,
+    TIMES = 287,
+    DIVIDE = 288,
+    DEE = 289
   };
 #endif
 
@@ -79,10 +85,10 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 18 "roll.y" /* yacc.c:1909  */
- int i; 
+#line 20 "roll.y" /* yacc.c:1909  */
+ int i; struct die *p; int b; char *s; 
 
-#line 86 "roll.tab.h" /* yacc.c:1909  */
+#line 92 "roll.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

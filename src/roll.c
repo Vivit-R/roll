@@ -1,6 +1,7 @@
 /** This file contains functions for making the rolls. **/
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "roll.h"
 #include "settings.h"
 #include "output.h"
@@ -63,20 +64,12 @@ struct die *explodedice(int dice, int sides) {
 }
 
 
-/* Standard additive roll */
-int d(int dice, int sides) {
+/* Wrapper function of rolling dice */
+struct die *d(int dice, int sides) {
     struct die *rolls = rolldice(dice, sides);
-    int ret = sumdice(rolls);
     printdice(rolls);
 
-    if (verbose) {
-        queuemsg("Total: ");
-        queuenum(ret);
-        queuemsg("\n");
-    }
-
-    freedice(rolls);
-    return ret;
+    return rolls;
 }
 
 /* Exploding explosive roll */
@@ -88,4 +81,99 @@ int x(int dice, int sides) {
     }
     freedice(rolls);
     return ret;
+}
+
+/* Playing cards, because Linsolv asked for it */
+char *drawcard() {
+    int suitnum = rand() % 4;
+    int facenum = 1 + rand() % 13;
+
+    char *ret = malloc(2 * sizeof (char));
+    strcpy(ret, " ");
+
+    switch (facenum) {
+        case 1:
+        default: /* <-- Can't happen */
+            ret = forcestring(&ret, "Ace");
+            break;
+
+        case 2:
+            ret = forcestring(&ret, "Deuce");
+            break;
+
+        case 3:
+            ret = forcestring(&ret, "Trey");
+            break;
+
+        case 4:
+            ret = forcestring(&ret, "Cater");
+            break;
+
+        case 5:
+            ret = forcestring(&ret, "Cinque");
+            break;
+
+        case 6:
+            ret = forcestring(&ret, "Sice");
+            break;
+
+        case 7:
+            ret = forcestring(&ret, "Seven");
+            break;
+
+        case 8:
+            ret = forcestring(&ret, "Eight");
+            break;
+
+        case 9:
+            ret = forcestring(&ret, "Nine");
+            break;
+
+        case 10:
+            ret = forcestring(&ret, "Ten");
+            break;
+
+        case 11:
+            ret = forcestring(&ret, "Knave");
+            break;
+
+        case 12:
+            ret = forcestring(&ret, "Queen");
+            break;
+        
+        case 13:
+            ret = forcestring(&ret, "King");
+            break;
+
+    }
+
+    char *tmp = malloc(2 * sizeof (char));
+    strcpy(tmp, " ");
+
+    switch (suitnum) {
+        case 0:
+        default: /* <-- Can't happen */
+            tmp = forcestring(&tmp, " of Spades");
+            break;
+
+        case 1:
+            tmp = forcestring(&tmp, " of Clubs");
+            break;
+
+        case 2:
+            tmp = forcestring(&tmp, " of Diamonds");
+            break;
+            
+        case 3:
+            tmp = forcestring(&tmp, " of Hearts");
+            break;
+    }
+
+    ret = realloc(ret, sizeof (char) * (1 + strlen(ret) + strlen(tmp)));
+
+    strcat(ret, tmp);
+
+    free(tmp);
+
+    return ret;    
 }

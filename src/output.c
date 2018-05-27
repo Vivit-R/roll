@@ -10,6 +10,8 @@
 /* Verbosity setting */
 int verbose;
 
+/* Are we ready to eport the final result of a given line of input? */
+
 /* The string to be next printed */
 char *printstr;
 
@@ -56,20 +58,34 @@ void queuemsg(const char *str) {
 
 /* Adds a number to the string to be printed */
 void queuenum(int num) {
-    char *str = malloc(sizeof (char) * (2 + (int) log10((double) num)));
+    char *str;
+    if (num == 0) {
+        str = malloc(sizeof (char) * 2);
+    } else {
+        str = malloc(sizeof (char) * (2 + (int) log10((double) num)));
+    }
+
     sprintf(str, "%d", num);
     queuemsg(str);
     free(str);
 }
 
-void printmsg() {
-    printf("%s", printstr);
+/* Clears the message queue */
+void flushmsg() {
     if (lenprintstr) {
         free(printstr);
         lenprintstr = 0;
     }
 }
 
+/* Prints message and flushes the queued messages */
+void printmsg() {
+    printf("%s", printstr);
+    flushmsg();
+}
+
+
+/** Reporting functions to be called by the yacc file **/
 /* Queues the values of all dice to print them to stdout */
 void printdice(struct die *d) {
     if (!verbose) {
@@ -95,3 +111,30 @@ void printdice(struct die *d) {
 
     queuemsg("\n");
 }
+
+/* Reports the numerical result of a roll or mathematical expression,
+   with given prefix. */
+int reportresult(const char *prefix, int result) {
+    queuemsg("Result: ");
+    queuenum(result);
+    printmsg();
+    return result;
+}
+
+/* Reports whether or not a check was successful */
+void reportsuccess(int check) {
+    queuemsg(check ? "Success." : "Failure.");
+    printmsg();
+}
+
+/* Makes room in the string at the pointer pointed to by dest and copies.
+   the string into dest.
+   Beware of dangling pointers!  Make sure you assign the value at dest to the
+   return value of this function when calling this function. */
+char *forcestring(char **dest, const char *newstring) {
+    *dest = realloc(*dest, sizeof (char) * (1 + strlen(newstring)));
+    strcpy(*dest, newstring);
+
+    return *dest;
+}
+
