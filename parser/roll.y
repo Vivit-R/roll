@@ -67,6 +67,8 @@
 %right GT
 %right LT
 
+%right TILDE
+
 /* Success-counting operators -- these yield integers */
 %right EEQ
 %right GGT
@@ -79,6 +81,8 @@
 /* Arithmetic operators */
 %left PLUS MINUS
 %left TIMES DIVIDE
+
+%left BANG
 
 /* The D */
 %left DEE
@@ -149,6 +153,10 @@ roll:   DEE exp {
 exp:
     NUMBER {
         $$ = $1;
+
+    } | roll BANG {
+        explode($1, 0);
+        $$ = destructive_sumdice($1);
     } | roll {
         $$ = destructive_sumdice($1);
     } | conditional {

@@ -70,6 +70,12 @@ false       { return FALSE; }
 \>>=        { return GGE; }
 \<<=        { return LLE; }
 
+ /* Exclamation point, for exploding dice */
+!           { return BANG; }
+
+ /* Tilde, for negation */
+~           { return TILDE; }
+
  /* Endlines end statements */
 \n          { return ENDLINE; }
 

@@ -16,9 +16,6 @@ struct die *rolldice(int dice, int sides);
 struct die *reroll(struct die *d);
 struct die *d(int dice, int sides);
 
-struct die *explodedice(int dice, int sides);
-int x(int dice, int sides);
-
 void freedice(struct die *dietofree);
 
 void setverbose();

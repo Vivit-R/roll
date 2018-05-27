@@ -27,7 +27,6 @@ struct die *rolldice(int dice, int sides) {
     if (ret->next) {
         ret->next->prev = ret;
     }
-    
 
     return ret;
 }
@@ -56,31 +55,12 @@ void freedice(struct die *d) {
 }
 
 
-struct die *explodedice(int dice, int sides) {
-    struct die *d = rolldice(dice, sides);
-    explode(d, dice);
-
-    return d;
-}
-
-
 /* Wrapper function of rolling dice */
 struct die *d(int dice, int sides) {
     struct die *rolls = rolldice(dice, sides);
     printdice(rolls);
 
     return rolls;
-}
-
-/* Exploding explosive roll */
-int x(int dice, int sides) {
-    struct die *rolls = explodedice(dice, sides);
-    int ret = sumdice(rolls);
-    if (verbose) {
-        printdice(rolls);
-    }
-    freedice(rolls);
-    return ret;
 }
 
 /* Playing cards, because Linsolv asked for it */

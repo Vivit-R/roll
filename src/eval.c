@@ -7,54 +7,56 @@
 
 
 /* Returns the bottom of the die pool in which the given die is contained. */
-struct die *bottom(struct die *d) {
-    while (d && d->prev) {
-        d = d->prev;
+struct die *bottom(struct die *dee) {
+    /* Iterate until at the bottom */
+    while (dee && dee->prev) {
+        dee = dee->prev;
     }
-    return d;
+    return dee;
 }
 
 /* Returns the top of the die pool in which the given die is contained. */
-struct die *top(struct die *d) {
-    while (d && d->next) {
-        d = d->next;
+struct die *top(struct die *dee) {
+    /* Iterate until at the top */
+    while (dee && dee->next) {
+        dee = dee->next;
     }
-    return d;
+    return dee;
 }
 
 
-/* Removes and frees a die from the pool. */
-void drop(struct die *d) {
-    if (d->next) {
-        d->next->prev = d->prev;
+/* Removes and frees a die from the pool. A standard linked-list deletion. */
+void drop(struct die *dee) {
+    if (dee->next) {
+        dee->next->prev = dee->prev;
     }
 
-    if (d->prev) {
-        d->prev->next = d->next;
+    if (dee->prev) {
+        dee->prev->next = dee->next;
     }
 
-    free(d);
+    free(dee);
 }
 
 
 /* Drops the highest or lowest values in the given die pool.
  * Negative value for dropn means drop high, positive means drop low. */
 // FIXME: O(n^2) time
-struct die *dropdice(struct die *d, int dropn) {
+struct die *dropdice(struct die *dee, int dropn) {
     /*  lowest and prepare the
        memory location for the die we intend to drop */
-    struct die *dropit = bottom(d);
+    struct die *dropit = bottom(dee);
 
     while (dropn > 0) {
-        d = bottom(d);
-        dropit = d;
-        while (d->next) {
-            /* If the value of the die at d is less than the value of the die
-               at dropit, set dropit equal to d. */
-            if (d->val < dropit->val) {
-                dropit = d;
+        dee = bottom(dee);
+        dropit = dee;
+        while (dee->next) {
+            /* If the value of the die at dee is less than the value of the die
+               at dropit, set dropit equal to dee. */
+            if (dee->val < dropit->val) {
+                dropit = dee;
             }
-            d = d->next;
+            dee = dee->next;
         }
 
         drop(dropit);
@@ -63,43 +65,47 @@ struct die *dropdice(struct die *d, int dropn) {
 
     /* Do the same, but dropping high instead of low. */
     while (dropn < 0) {
-        d = bottom(d);
-        dropit = d;
-        while (d->next) {
-            /* If the value of the die at d is less than the value of the die
-               at dropit, set dropit equal to d. */
-            if (d->val > dropit->val) {
-                dropit = d;
+        dee = bottom(dee);
+        dropit = dee;
+        while (dee->next) {
+            /* If the value of the die at dee is less than the value of the die
+               at dropit, set dropit equal to dee. */
+            if (dee->val > dropit->val) {
+                dropit = dee;
             }
-            d = d->next;
+            dee = dee->next;
         }
 
         drop(dropit);
         dropn++;
     }
 
-    return bottom(d);
+    return bottom(dee);
 }
 
 
 /* Checks for maximum value in a pool, rolls that many dice and adds the new
-   ones to the pool. TODO: Implement complex conditional explosion. */
-struct die *explode(struct die *d, int limiter) {
+   ones to the pool. The "limiter" parameter is used to count how many times
+   over the current pool has exploded, to make sure this does not exceed
+   EXPLODE_LIMIT.
+
+   TODO: Implement sophistocated conditional explosion. */
+struct die *explode(struct die *dee, int limiter) {
     int explosions = 0;
 
-    explosions = countsuccesses(d, d->sides, "=");
+    explosions = countsuccesses(dee, dee->sides, "=");
 
     if (explosions + limiter > EXPLODE_LIMIT) {
         explosions = EXPLODE_LIMIT - limiter;
     }
 
     if (explosions) {
-        struct die *newdice = rolldice(explosions, d->sides);
+        struct die *newdice = d(explosions, dee->sides);
         explode(newdice, limiter + explosions);
-        joinpools(d, newdice);
+        joinpools(dee, newdice);
     }
 
-    return d;
+    return dee;
 }
 
 
@@ -124,8 +130,8 @@ struct die *joinpools(struct die *d1, struct die *d2) {
 
 /* Counts dice that fulfill a certain test given by a number and a string.
  * If the string is not recognized, default to "=". */
-int countsuccesses(struct die *d, int tn, const char *test) {
-    d = bottom(d);
+int countsuccesses(struct die *dee, int tn, const char *test) {
+    dee = bottom(dee);
     int op = 0;
 
     if (!strcmp(test, ">")) {
@@ -139,22 +145,22 @@ int countsuccesses(struct die *d, int tn, const char *test) {
     }
 
     int count = 0;
-    while (d) {
+    while (dee) {
         switch (op) {
-            case 1: if (d->val > tn) count++;
+            case 1: if (dee->val > tn) count++;
                 break;
-            case 2: if (d->val < tn) count++;
+            case 2: if (dee->val < tn) count++;
                 break;
-            case 3: if (d->val >= tn) count++;
+            case 3: if (dee->val >= tn) count++;
                 break;
-            case 4: if (d->val <= tn) count++;
+            case 4: if (dee->val <= tn) count++;
                 break;
 
-            default: if (d->val == tn) count++;
+            default: if (dee->val == tn) count++;
                 break;
         }
 
-        d = d->next;
+        dee = dee->next;
     }
 
     return count;
@@ -163,18 +169,18 @@ int countsuccesses(struct die *d, int tn, const char *test) {
 
 /* Sums the value of the dice in the pool of which the die at the given pointer
  * is a member */
-int sumdice(struct die *d) {
+int sumdice(struct die *dee) {
     /* Iterate to the bottom of the linked list */
-    while (d->prev) {
-        d = d->prev;
+    while (dee->prev) {
+        dee = dee->prev;
     }
 
     int sum = 0;
 
     /* Iterate upwards through the linked list until the end is reached */
-    while (d) {
-        sum += d->val;
-        d = d->next;
+    while (dee) {
+        sum += dee->val;
+        dee = dee->next;
     }
 
     if (verbose) {
@@ -187,9 +193,9 @@ int sumdice(struct die *d) {
 }
 
 /* Sum the dice and free the pointer */
-int destructive_sumdice(struct die *d) {
-    int ret = sumdice(d);
-    freedice(d);
+int destructive_sumdice(struct die *dee) {
+    int ret = sumdice(dee);
+    freedice(dee);
     return ret;
 }
 

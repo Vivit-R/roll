@@ -67,16 +67,18 @@ extern int yydebug;
     EQ = 277,
     GT = 278,
     LT = 279,
-    EEQ = 280,
-    GGT = 281,
-    LLT = 282,
-    GGE = 283,
-    LLE = 284,
-    PLUS = 285,
-    MINUS = 286,
-    TIMES = 287,
-    DIVIDE = 288,
-    DEE = 289
+    TILDE = 280,
+    EEQ = 281,
+    GGT = 282,
+    LLT = 283,
+    GGE = 284,
+    LLE = 285,
+    PLUS = 286,
+    MINUS = 287,
+    TIMES = 288,
+    DIVIDE = 289,
+    BANG = 290,
+    DEE = 291
   };
 #endif
 
@@ -88,7 +90,7 @@ union YYSTYPE
 #line 20 "roll.y" /* yacc.c:1909  */
  int i; struct die *p; int b; char *s; 
 
-#line 92 "roll.tab.h" /* yacc.c:1909  */
+#line 94 "roll.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;
