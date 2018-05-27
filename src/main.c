@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+
 #include "roll.h"
 #include "roll.tab.h"
 #include "eval.h"
@@ -11,12 +12,14 @@
 void init();
 void cleanup();
 void finish();
+void introduction();
 
 extern int lenprintstr;
 
 int main(int argc, char **argv) {
     init();
-    printf("Welcome to roll interactive mode.\n> ");
+
+    introduction();
     yyparse();
 
     finish();
@@ -39,4 +42,8 @@ void finish() {
     printf("Goodbye. May your dice roll well.\n");
     cleanup();
     exit(0);
+}
+
+void introduction() {
+    printf("Welcome to roll interactive mode.\n> ");
 }

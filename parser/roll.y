@@ -167,14 +167,19 @@ exp:
         $$ = $2;
     } | exp PLUS exp {
         $$ = $1 + $3;
+        report_arithmetic($1, '+', $3, $$);
     } | exp TIMES exp {
         $$ = $1 * $3;
+        report_arithmetic($1, '*', $3, $$);
     } | exp MINUS exp {
         $$ = $1 - $3;
+        report_arithmetic($1, '-', $3, $$);
     } | exp DIVIDE exp {
         $$ = 0;
+
         if ($3 != 0) {
             $$ = $1 / $3;
+            report_arithmetic($1, '/', $3, $$);
         } else {
             yyerror("Division by zero!");
         }

@@ -127,6 +127,32 @@ void reportsuccess(int check) {
     printmsg();
 }
 
+
+/* Reports the result of an arithmetic evaluation */
+void report_arithmetic(int a, char op, int b, int r) {
+    if (!verbose) {
+        return;
+    }
+    queuenum(a);
+   
+    /* Putting op into a string so it can be passed to queuemsg() */
+    char *opstr = malloc(2 * sizeof (char));
+    opstr[0] = op;
+    opstr[1] = '\0';
+    queuemsg(opstr);
+    free(opstr);
+    
+    queuenum(b);
+    queuemsg("=");
+    queuenum(r);
+
+    queuemsg("\n");
+    printmsg();
+}
+
+
+/*** Misc. utility ***/
+
 /* Makes room in the string at the pointer pointed to by dest and copies.
    the string into dest.
    Beware of dangling pointers!  Make sure you assign the value at dest to the
@@ -137,4 +163,3 @@ char *forcestring(char **dest, const char *newstring) {
 
     return *dest;
 }
-

@@ -17,12 +17,20 @@ To roll dice, write the roll you want to make in standard die notation, e.g.:
 If you only want to roll one die, the preceding '1' may be omitted:
 > d20   # roll one twenty-sided die
 
+The string "d%" is accepted as a synonym for "1d100":
+> d%    # roll one one-hundred-sided die
+
+You are not limited to the dice that are geometrically possible in real life,
+you may roll dice with any natural number of faces:
+> d13
+> d47
+> d23
+
 Similarly, as in the GURPS books, the following '6' may be omitted for rolls
 only involving six-sided dice:
 > 3d    # roll three six-sided dice
 
 Do note, however, that a lone letter 'd' is not accepted as a synonym for 1d6.
-
 
 The letter d is considered its own operator, the 'dice operator', and is thus
 not sensitive to whitespace between it and its operands; '3 d 6' is the same as
@@ -59,5 +67,11 @@ associated expressions, which may themselves include die rolls:
 
 
 === CHECKS ===
-TODO
+Checks are boolean expressions expressed in the form of a mathematical
+inequality:
+> 1d6 > 3       # success if the value of a roll of 1d6 is greater than 3
+> 1d20 >= 15    # success if the value of a roll of 1d20 is greater than 15
+> d% <= 33      # a check with a 33% chance of success
 
+Note that stringing together inequalities, e.g. "1 < 2 < 3 ..." is not
+implemented and may produce unexpected results.
