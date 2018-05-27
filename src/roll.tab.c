@@ -478,9 +478,9 @@ static const yytype_uint8 yyrline[] =
        0,    92,    92,    92,    98,   103,   105,   108,   110,   112,
      118,   118,   118,   118,   124,   126,   131,   131,   136,   136,
      142,   144,   146,   148,   154,   157,   160,   162,   164,   166,
-     168,   170,   172,   174,   180,   183,   186,   189,   196,   200,
-     203,   206,   209,   216,   221,   229,   231,   233,   235,   237,
-     239,   241
+     168,   170,   172,   174,   185,   188,   191,   194,   201,   205,
+     208,   211,   214,   221,   226,   234,   236,   238,   240,   242,
+     244,   246
 };
 #endif
 
@@ -1524,173 +1524,178 @@ yyreduce:
   case 33:
 #line 174 "roll.y" /* yacc.c:1646  */
     {
-        (yyval.i) = (yyvsp[-2].i) / (yyvsp[0].i);
+        (yyval.i) = 0;
+        if ((yyvsp[0].i) != 0) {
+            (yyval.i) = (yyvsp[-2].i) / (yyvsp[0].i);
+        } else {
+            yyerror("Division by zero!");
+        }
     }
-#line 1530 "roll.tab.c" /* yacc.c:1646  */
+#line 1535 "roll.tab.c" /* yacc.c:1646  */
     break;
 
   case 34:
-#line 180 "roll.y" /* yacc.c:1646  */
+#line 185 "roll.y" /* yacc.c:1646  */
     {
         (yyval.i) = (yyvsp[-1].i);
         reportresult("Value: ", (yyval.i));
     }
-#line 1539 "roll.tab.c" /* yacc.c:1646  */
+#line 1544 "roll.tab.c" /* yacc.c:1646  */
     break;
 
   case 35:
-#line 183 "roll.y" /* yacc.c:1646  */
+#line 188 "roll.y" /* yacc.c:1646  */
     {
         (yyval.i) = (yyvsp[-1].b);
         reportsuccess((yyval.i));
     }
-#line 1548 "roll.tab.c" /* yacc.c:1646  */
+#line 1553 "roll.tab.c" /* yacc.c:1646  */
     break;
 
   case 36:
-#line 186 "roll.y" /* yacc.c:1646  */
+#line 191 "roll.y" /* yacc.c:1646  */
     {
         (yyval.i) = (yyvsp[-1].i);
         reportresult("Result: ", (yyval.i));
     }
-#line 1557 "roll.tab.c" /* yacc.c:1646  */
+#line 1562 "roll.tab.c" /* yacc.c:1646  */
     break;
 
   case 37:
-#line 189 "roll.y" /* yacc.c:1646  */
+#line 194 "roll.y" /* yacc.c:1646  */
     {
         (yyval.i) = (yyvsp[-1].i);
         reportresult("Success(es): ", (yyval.i));
     }
-#line 1566 "roll.tab.c" /* yacc.c:1646  */
+#line 1571 "roll.tab.c" /* yacc.c:1646  */
     break;
 
   case 38:
-#line 196 "roll.y" /* yacc.c:1646  */
+#line 201 "roll.y" /* yacc.c:1646  */
     {
         /* Ugly kludge with the frees here, FIXME pls */
         (yyval.i) = countsuccesses((yyvsp[-2].p), (yyvsp[0].i), ">");
         freedice((yyvsp[-2].p));
     }
-#line 1576 "roll.tab.c" /* yacc.c:1646  */
+#line 1581 "roll.tab.c" /* yacc.c:1646  */
     break;
 
   case 39:
-#line 200 "roll.y" /* yacc.c:1646  */
+#line 205 "roll.y" /* yacc.c:1646  */
     {
         (yyval.i) = countsuccesses((yyvsp[-2].p), (yyvsp[0].i), "<");
         freedice((yyvsp[-2].p));
     }
-#line 1585 "roll.tab.c" /* yacc.c:1646  */
+#line 1590 "roll.tab.c" /* yacc.c:1646  */
     break;
 
   case 40:
-#line 203 "roll.y" /* yacc.c:1646  */
+#line 208 "roll.y" /* yacc.c:1646  */
     {
         (yyval.i) = countsuccesses((yyvsp[-2].p), (yyvsp[0].i), ">=");
         freedice((yyvsp[-2].p));
     }
-#line 1594 "roll.tab.c" /* yacc.c:1646  */
+#line 1599 "roll.tab.c" /* yacc.c:1646  */
     break;
 
   case 41:
-#line 206 "roll.y" /* yacc.c:1646  */
+#line 211 "roll.y" /* yacc.c:1646  */
     {
         (yyval.i) = countsuccesses((yyvsp[-2].p), (yyvsp[0].i), "<=");
         freedice((yyvsp[-2].p));
     }
-#line 1603 "roll.tab.c" /* yacc.c:1646  */
+#line 1608 "roll.tab.c" /* yacc.c:1646  */
     break;
 
   case 42:
-#line 209 "roll.y" /* yacc.c:1646  */
+#line 214 "roll.y" /* yacc.c:1646  */
     {
         (yyval.i) = countsuccesses((yyvsp[-2].p), (yyvsp[0].i), "=");
         freedice((yyvsp[-2].p));
     }
-#line 1612 "roll.tab.c" /* yacc.c:1646  */
+#line 1617 "roll.tab.c" /* yacc.c:1646  */
     break;
 
   case 43:
-#line 216 "roll.y" /* yacc.c:1646  */
+#line 221 "roll.y" /* yacc.c:1646  */
     {
         (yyval.i) = 0;
         if ((yyvsp[-2].b)) {
             (yyval.i) = (yyvsp[0].i); 
         }
     }
-#line 1623 "roll.tab.c" /* yacc.c:1646  */
+#line 1628 "roll.tab.c" /* yacc.c:1646  */
     break;
 
   case 44:
-#line 221 "roll.y" /* yacc.c:1646  */
+#line 226 "roll.y" /* yacc.c:1646  */
     {
         (yyval.i) = (yyvsp[0].i);
         if ((yyvsp[-4].b)) {
             (yyval.i) = (yyvsp[-2].i); 
         }
     }
-#line 1634 "roll.tab.c" /* yacc.c:1646  */
+#line 1639 "roll.tab.c" /* yacc.c:1646  */
     break;
 
   case 45:
-#line 229 "roll.y" /* yacc.c:1646  */
+#line 234 "roll.y" /* yacc.c:1646  */
     {
         (yyval.b) = 1;
     }
-#line 1642 "roll.tab.c" /* yacc.c:1646  */
+#line 1647 "roll.tab.c" /* yacc.c:1646  */
     break;
 
   case 46:
-#line 231 "roll.y" /* yacc.c:1646  */
+#line 236 "roll.y" /* yacc.c:1646  */
     {
         (yyval.b) = 0;
     }
-#line 1650 "roll.tab.c" /* yacc.c:1646  */
+#line 1655 "roll.tab.c" /* yacc.c:1646  */
     break;
 
   case 47:
-#line 233 "roll.y" /* yacc.c:1646  */
+#line 238 "roll.y" /* yacc.c:1646  */
     { 
         (yyval.b) = ((yyvsp[-2].i) == (yyvsp[0].i));
     }
-#line 1658 "roll.tab.c" /* yacc.c:1646  */
+#line 1663 "roll.tab.c" /* yacc.c:1646  */
     break;
 
   case 48:
-#line 235 "roll.y" /* yacc.c:1646  */
+#line 240 "roll.y" /* yacc.c:1646  */
     {
         (yyval.b) = ((yyvsp[-2].i) > (yyvsp[0].i));
     }
-#line 1666 "roll.tab.c" /* yacc.c:1646  */
+#line 1671 "roll.tab.c" /* yacc.c:1646  */
     break;
 
   case 49:
-#line 237 "roll.y" /* yacc.c:1646  */
+#line 242 "roll.y" /* yacc.c:1646  */
     {
         (yyval.b) = ((yyvsp[-2].i) < (yyvsp[0].i));
     }
-#line 1674 "roll.tab.c" /* yacc.c:1646  */
+#line 1679 "roll.tab.c" /* yacc.c:1646  */
     break;
 
   case 50:
-#line 239 "roll.y" /* yacc.c:1646  */
+#line 244 "roll.y" /* yacc.c:1646  */
     {
         (yyval.b) = ((yyvsp[-2].i) >= (yyvsp[0].i));
     }
-#line 1682 "roll.tab.c" /* yacc.c:1646  */
+#line 1687 "roll.tab.c" /* yacc.c:1646  */
     break;
 
   case 51:
-#line 241 "roll.y" /* yacc.c:1646  */
+#line 246 "roll.y" /* yacc.c:1646  */
     {
         (yyval.b) = ((yyvsp[-2].i) <= (yyvsp[0].i));
     }
-#line 1690 "roll.tab.c" /* yacc.c:1646  */
+#line 1695 "roll.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 1694 "roll.tab.c" /* yacc.c:1646  */
+#line 1699 "roll.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1918,7 +1923,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 246 "roll.y" /* yacc.c:1906  */
+#line 251 "roll.y" /* yacc.c:1906  */
 
 
 void yyerror(const char* msg) {

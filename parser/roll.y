@@ -172,7 +172,12 @@ exp:
     } | exp MINUS exp {
         $$ = $1 - $3;
     } | exp DIVIDE exp {
-        $$ = $1 / $3;
+        $$ = 0;
+        if ($3 != 0) {
+            $$ = $1 / $3;
+        } else {
+            yyerror("Division by zero!");
+        }
     }
     ;
 
